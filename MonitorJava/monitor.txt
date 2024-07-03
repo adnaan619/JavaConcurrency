@@ -1,0 +1,29 @@
+design a concurrent java program that utilizes the monitor concept
+for synchronization. Implement a scenario where multiple threads
+access a shared resource and demonstrate the use of synchronized  
+methods or blocks to prevent data corruption and race conditions
+
+The monitor concept in java is a synchronization construct that 
+allows for mutual exclusion and for a certain condition to become
+true. Each object in java is associated with a monitor that a
+thread can lock or unlock.
+
+Monitors are used to manage access to shared resources by multiple 
+threads
+
+When a method is declared as synchronized a thread has to acquire the 
+lock before it can execute the method.
+
+synchronized blocks are for the sole purpose of synchronizing only a
+portion of the method, providing more fine grained control over the 
+part of the methods execution.
+
+What is the wait and notify mechanism - the wait(), notify() and notifyAll()
+are methods used to facilitate the communication between threads.
+
+In this example of code 
+
+The SharedResource class has a counter and an increment method that increments the counter in a thread safe manner
+The SharedResourceUser class represents threads that use the shared resource and each thread calls the increment method multiple times
+The synchronized keyword in the method makes sure that only one thread can execture the method at a time preventing race conditions and race conditions.
+

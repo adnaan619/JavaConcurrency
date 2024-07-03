@@ -1,0 +1,40 @@
+The Fork-Join framework in java is designed to take advantage of multiple
+processors to perform tasks more efficiently by breaking them down into 
+smaller, independent subtasks. 
+
+Keywords - breaking down into smaller independent subtasks 
+           processed in parallel and then combined to produce the final result
+
+Divide&Conquer - task is broken down into smaller subtasks until they are manageable 
+Parallel Processing - process in parallel using multiple threads
+Join - The result of the subtasks that are combined to form the final output
+
+Some of the key tasks are the ForkJoinPool and the ForkJoinTask
+
+We have an array of numbers (a large one) - instead of summing them sequentially, 
+we could split the array into smaller segments and then sum each of the segments
+in parallel, and then combine the result.
+
+The ForkJoinPool is a pool of worker threads that execute ForkJoinTasks
+ForkJoinTasks is a lightweight task that can be forked and joined after completion.
+RecursiveTask is a type of ForkJoinTask that returns a result
+
+We create a pool of threads to manage and execute our tasks.
+We define how to split the task and how to combine the result.
+We use the pool to execute the main task and retrieve the result.
+
+Steps for the program.
+
+Main Class 
+    static class SumTask extends RecursiveTask<Integer>
+    add the variable and the array as private
+    create a constructor for it with the assigned variables
+
+    protected compute method
+        with if else statement considering leftTask and rightTask
+
+    
+    main method 
+        intialize the array of numbers
+        use ForkJoinPool
+        calculate and print out the sum.

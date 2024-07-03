@@ -1,0 +1,32 @@
+It is again a concurrent programming construct used to manage the access to 
+shared resources. Helps prevent race conditions and makes sure that multiple
+threads do not interfere with each other when accessing shared data.
+
+How does it work? 
+
+The semaphore uses a counter that is used to manage the number of permits 
+avaialble for accessing the resource.
+
+A semaphore has a counter that tracks the number of avaialble permits, and
+when the counter is greater than zero, a thread can acquire a permit and 
+decrement the counter. This is the counting semaphore and how it works
+
+Considering the Mutex (Binary semaphore) is a special case of the counting
+semaphore with only 2 values, 1 and 0. They are used to ensure mutual 
+exclusion, allowing only one thread to access a resource at a time.
+
+A better way to understand the counting semaphore with a scenario
+
+Parking lot with 3 parking spaces / semaphore with counter = 3
+
+initial state - semaphore counter = 3 ( 3 parking spaces available)
+
+In the parking lot a car comes and wants to park. ( if the semaphore>0 the car can park and the counter is decremented by 1)
+
+If the (counter=0) the car must wait until a space becomes avaialble 
+
+Similarly when a car exits the lot the counter increments by 1
+
+Semaphores control how many threads can access a shared resource at the same time.
+Prevent overuse of the shared resource by using a limited permit count.
+

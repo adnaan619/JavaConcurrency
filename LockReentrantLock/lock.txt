@@ -1,0 +1,17 @@
+The java lock interface and the ReentrantLock class are more 
+flexible than the synchronized keyword
+
+Lock interface provides a more versatile mechanism for thread synchronization
+
+The Lock provides a more fine grained control over locking 
+Provides the ability to acquire a lock without blocking
+Attempts to acquire a lock without blocking or timeout
+Interruptibly acquire a lock
+
+The ReentrantLock class implements the Lock interface and offers
+additional capabilities
+
+It is a ReentrantLock that threads can acquire a lock without causing a 
+deadlock
+Provides fairness policy where the longest waiting thread gets the lock
+first

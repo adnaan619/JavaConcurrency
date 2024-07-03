@@ -1,0 +1,101 @@
+The program has 4 classes, Mother, Child, Plate, and Test.
+
+In the Plate class we have the variables boolean available and String food
+In the constructor we initialize the food to null and the available to false
+Then we have 2 methods consume and produce that are synchronized, where both the methods have a 
+while loop.
+
+The mother and child class have the private Plate plate object where they also have the run methods
+implementing the runnable.
+
+The Test class calls the Mother, Child and the Plate Objects and creates and calls the threads
+
+public class Plate{
+    private boolean available;
+    private String food;
+
+    public Plate(String food, boolean available){
+        super();
+        this.food = null;
+        this.available = false;
+    }
+
+    public synchronized void produce(String food){
+        while(available){
+            try{
+                wait();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        this.food = food;
+        System.out.println(Thread.currentThread().getName() + " produced: " + food);
+        available = true;
+        notifyAll();
+    }
+
+
+    public synchronized void consume(){
+        while(!available){
+            try{
+                wait();
+            } catch (InterruptedException e){
+                e.printStackTrace();
+            }
+        }
+        this.food = food;
+        System.out.println(Thread.currentThread.getName()+ " consumed: " + food);
+        available = false;
+        notifyAll();
+        return food;
+    }
+
+}
+
+public class Mother implents Runnable{
+    private Plate plate;
+    
+    public Plate(Plate plate){
+        super();
+        this.plate = plate;
+    }
+
+    @Override
+    public void run(){
+        for (int i=0; i<10; i++){
+            String food = "Food at " + i + "th serve";
+            plate.produce(food);
+        }
+    }
+}
+
+public class Child implements Runnable{
+    private Plate plate;
+
+    public Child(Plate plate){
+        super();
+        this.plate = plate;
+    }
+
+    public void run(){
+        for (int i=0; i<10; i++){
+            String food = plate.consume();
+        }
+    }
+}
+
+public class Test{
+    public static void main(String[] args){
+        Plate plate = new Plate();
+
+        Mother mother = new Mother(plate);
+        Child child = new Child(plate);
+
+        Thread motherThread = new Thread(mother, "Mother");
+        Thread childThread = new Thread(child, "Child");
+
+        motherThread.start();
+        childThread.start();
+    }
+}
+

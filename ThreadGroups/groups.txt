@@ -1,0 +1,9 @@
+ThreadGroups are a way of having multiple threads in a single unit
+This is good for controlling, monitoring, and managing multiple threads together
+For threadGroups we can perform the same task on a group of the threads instead
+
+When creating a new thread we can specify to which threadgroup it belongs to 
+
+activeCount() / enumerate() / interrupt() are some of the methods that could be used along
+
+

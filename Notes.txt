@@ -1,0 +1,320 @@
+Q) Describe the finite state process abstract model of a process
+
+Ans) FSP is a modelling language used to represent the behaviours of a concurrent 
+system. It depicts the concepts of concurrency using actions, processes, transitions of
+the actions and state of the concurrent model.
+
+The FSP model is specifically designed to represent concurrent systems.
+
+The state represents the different processes of the concurrent system.
+The actions are the events that cause state transitions from one state to another.
+Processes are the main entities that are being modeled and each process has its own set
+of actions, states and state transitions.
+
+It includes the action prefix operator ->
+                parallel composition operator || used to combine multiple processes
+                Choice operator | that could decide on either action
+                STOP operator that represents a deadlocked state where no further action
+                Indexing using the BUFF allows processes to handle multiple instances of actions or states
+                Parameterized process - BUFF( N = DEFAULT) = ( in[ i : 0..N] -> out[i] -> BUFF ).
+
+The LTSA tool is what is used to model and analyze the behaviour of concurrent systems
+
+Q) The following FSP process models a 4 minute egg timer.
+
+EGG_TIMER( N = 240 ) = COUNTDOWN[ N ] ,
+COUNTDOWN[ i : 0..N ]
+= ( when( i > 0 ) tick -> COUNTDOWN[ i - 1 ]
+| when( i == 0 ) soundBuzzer -> STOP
+| reset -> COUNTDOWN[ N ]
+) .
+
+(i) State what actions are possible for the COUNTDOWN process and
+explain your selection of actions when:
+• i has the value 30
+• i has the value 0
+
+Ans) 
+i)
+When the value of i is 30 what happens is that the condition i > 0 becomes true and
+then what happens is the COUNTDOWN process takes place where COUNTDOWN[i-1] takes place
+making i = 29 and the reset is considered and resets the value back to COUNTDOWN[240]
+
+When the value becomes 0 what happens is the soundBuzzer action is triggered and results in 
+the program going into a deadlocked situation making the program to stop and as 
+the reset is action is always available it becomes true and then the COUNTDOWN becomes 240 again
+
+ii)
+
+The alphabet of a process in FSP refers to the set of actions that the process can engage in.
+In the context of concurrent systems the alphabet helps in understanding the interactions
+and communication between different phases.
+
+Process Alphabet is the set of actions that a process can perform or respond to and 
+for the egg timer these are the actions - tick reset and soundBuzzer
+
+
+iii) Define an FSP process called HARD_EGG_TIMER using the above
+EGG_TIMER process without modifying its code, to cook a hard
+boiled egg, that is for 5 minutes (300 seconds). 
+
+HARD_EGG_TIMER = EGG_TIMER(300). sets the countdown duration to 300 seconds
+
+(iv) Explain what deadlock means for an FSP process. 
+Describe the EGG_TIMER process's deadlock trace. 
+What change would you need to make to EGG_TIMER so that it successfully 
+terminates instead of deadlocking?
+
+Deadlock in the context of FSP is the situation where a process reaches a state
+from which it cannot proceed since it is waiting for an action that will never occur.
+So in this scenario the countdown buzzer starts with 240 and when it hits 0 what happens
+is that the soundBuzzer action is called and then transitions the process to STOP
+In order to terminate instead of having the STOP statement we could have TERMINATE.
+
+OYSTER = ( topUpOyster -> twentyPounds -> toppedUp -> printReceipt -> OYSTER ) .
+
+TICKET = ( allZones -> tenPounds -> printTicket -> printTicket -> TICKET
+         | zones12 -> fourPound -> printTicket -> TICKET ) .
+
+
+Question 2 
+
+part a ) The 3 processes would be the EastTrain, WestTrain, and SharedTrack
+
+EastTrain = ( leavesWestStation -> A ),
+A = ( enterA -> leavesA -> C ),
+C = ( enterC -> leavesC -> D ),
+D = ( enterD -> arrivesEastStation -> EastTrain ).
+
+WestTrain = ( leavesEastStation -> E),
+E = ( entersE -> leavesE -> C ),
+C = ( entersC -> leavesC -> B ),
+B = ( entersB -> arrivesWestStation -> WestTrain ).
+
+SharedTrack = ( enterC -> leavesC -> SharedTrack ).
+
+Composite Railway system
+
+||RailwaySystem = ( EastTrain || WestTrain || SharedTrack ) / { enterC/enterCE, enterC/enterCW, leaveC/leaveW }.
+
+By defining the processes this way we ensure that the Shared section of track Choice
+is mutually exclusive by EastTrain and WestTrain preventing any crashes.
+
+
+Q) What are the features of the semaphore concurrent programming mechanism.
+
+Ans) A semaphore is a synchronization primitive construct that manages the access of 
+multiple threads to a shared resource achieving mutual exclusion. Prevents race conditions
+and ensures thread safety. 
+A semaphore is a counter that regulates access to a shared resource by using the wait()
+and signal() functions. 
+
+There are 2 types of semaphores (mutex) which can only take ones and zeros allowing 
+only one thread to access the resource at a time. Then the other type is the counting 
+semaphore which can manage a pool of resources.
+
+Considering the counting semaphore if there are 5 printers a counting semaphore
+initializes to 5 can be used to ensure that no more that 5 print jobs can be handled simultaneously.
+
+b) What are the advantages and disadvantages of using semaphores? Explain
+why monitors are generally considered to be “better” than semaphores?
+
+
+Q) FSP question based on above chat content
+
+consider a simplified system where two trains, TrainA and TrainB, share
+a single bridge on their respective routes.
+To avoid a collision, only one train can use the bridge at a time.
+
+TrainA travels from Station1 to Station2 and must use the bridge
+TrainB travels from Station3 to Station4 and must also use the bridge 
+
+FSP Processes 
+
+TrainA process
+TrainB process
+Bridge process
+Composite process
+
+TrainA = ( leavesStation1 -> entersBridge -> leavesBridge -> entersStation2 -> TrainA ) .
+
+TrainB = ( leavesStation3 -> entersBridge -> leavesBridge -> entersStation4 -> TrainB ) .
+
+Bridge = ( entersBridge -> leavesBridge -> Bridge ) .
+
+RailwaySystem = ( TrainA || TrainB || Bridge ) 
+                / { enterBridge/ enterBridgeA, leaveBridge/leaveBridgeA, 
+                enterBridge/enterBridgeB, leaveBridge/leaveBridgeB } .
+
+
+Q) FSP question using BUFF - consider a scenario where a buffer process incoming data items.
+The buffer can hold upto 'N' items. There are 2 processes. 'Producer' which adds items to the
+buffer and 'Consumer' which removes items from the buffer. The 'Monitor' should ensure that
+buffers state is monitored periodically to log the current number of items.
+
+The 'Buffer' process should ensure that:
+
+The 'Producer' can add items if the buffer is not full.
+The 'Consumer' can remove items if the buffer is not empty.
+
+Processes are Buffer, Producer, Consumer, Monitor and a Composite process
+
+Producer = ( produce -> add -> Producer ) .
+
+Consumer = ( consume -> remove -> Consumer ) .
+
+Monitor = ( check -> log -> Monitor ) .
+
+const N = 5
+range COUNT = 0..N 
+
+Buffer = ( count: COUNT ) = 
+         | ( when ( count < N ) -> add( count + 1 )
+         | when ( count > N ) -> remove( count - 1 )
+         | check -> log -> Buffer( count )
+         ) .
+
+|| BufferSystem = ( Producer || Consumer || Buffer(0) || Monitor ) .
+
+
+Lets consider another scanario where we have a buffer that can hold upto 'N' items and 
+we have 2 types of producers HighPriorityProducer and LowPriorityProducer. The buffer 
+must prioritize items from the HighPriorityProducer over that of the LowPriorityProducer.
+There is also a Consumer process that removes items from the buffer.
+
+So the processes are 
+
+HighPriorityProducer process
+LowPriorityProducer process
+PriorityBuffer process
+Consumer process 
+Composite process
+
+HighPriorityProducer = ( produceHP -> putHP -> HighPriorityProducer ) .
+LowPriorityProducer = ( produceLP -> putLP -> LowPriorityProducer ) .
+
+Consumer = ( consume -> remove -> Consumer ) .
+
+const N = 5
+range COUNT = 0..N 
+
+PriorityBuffer( countHP: COUNT, countLP: COUNT ) =
+              | ( when ( countHP < N ) putHP -> PriorityBuffer( countHP + 1, countLP )
+              | when ( countLP > N && countHP == 0 ) putLP -> PriorityBuffer( countHP, countLP + 1 )
+              | when ( countHP > 0 ) get -> PriorityBuffer( countHP - 1, countLP )
+              | when ( countLP > 0 && countHP == 0 ) get -> PriorityBuffer( countHP, countLP - 1 ) 
+              ) .
+
+|| PriorityBufferSystem = ( HighPriorityProducer || LowPriorityProducer || PriorityBuffer(0, 0) || Consumer ) .
+
+Process Alphabets in FSP - the alphabet is a set of actions that the process can engage in.
+These actions include all the events or operations that the process can perform or synchronize
+with. 
+
+Consider a producer process that produces items and puts them it the buffer, and a consumer
+process that consumes items from the buffer. We will consider the Consumer, Producer, and the 
+Buffer processes and determine their alphabets.
+
+Producer = ( produce -> put -> Producer ) . alphabet - {produce, put}
+Consumer = ( get -> consume -> Consumer ) . alphabet - {get, consume}
+
+const N = 5
+range COUNT = 0..N 
+Buffer = ( count: COUNT ) =
+         ( when ( count < N ) put -> Buffer( count + 1 )
+         | when ( count > N ) consume -> Buffer( count - 1 )
+         ) .
+
+alphabet - { put, consume }
+
+|| BufferSystem = ( Producer || Consumer || Buffer(0) ).
+
+A composite process is the union of the alphabet of all its processes
+alphabet = { produce, get, put, consume }
+
+
+
+A trace is a sequence of actions that the process can perform starting from its initial state.
+Traces provide a way to observe and analyze the possible behaviours of a process.
+
+Representation of a process's trace as a tree 
+
+The trace of a process can be represented as a tree, where, 
+
+The root node represents the initial state, the edges represents an action, and a 
+node represents a state reached after performing a sequence of actions.
+
+Process = ( a -> b -> c -> STOP ) .
+
+Sequential Process's as a tree
+
+SeqProcess = ( x -> y -> z -> STOP ) .
+
+Traces of a process with Choice
+
+ChoiceProcess = ( p -> q -> STOP | r -> s -> STOP ) .
+
+Q) Consider a vending machine that dispenses drinks, the vending machine accepts with a coin 
+or a card payment. If the coin is inserted it checks if the coin valid and dispenses the drink 
+For the card checks if valid and dispenses the drink.
+
+FSP definitions
+
+Vending Machine Process
+Coin Process
+Card Process
+
+Coin = ( insertCoin -> ( validCoin -> dispenseDrink -> Coin
+                       | invalidCoin -> returnCoin -> Coin 
+                       ) ) .
+
+Card = ( insertCard -> ( validCard -> dispenseDrink -> Card
+                       | invalidCard -> ejectCard -> Card
+                       ) ) .
+
+VendingMachine = ( chooseCoin -> Coin
+                 | chooseCard -> Card
+                 ) .
+
+|| VendingSystem = ( Coin || Card || VendingMachine ) .
+
+Interleaving is a process that models concurrency by allowing the actions of concurrent
+processes to be interleaved in all the possible ways.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

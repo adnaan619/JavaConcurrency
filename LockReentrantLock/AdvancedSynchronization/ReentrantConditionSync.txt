@@ -1,0 +1,7 @@
+What are some of the avantages of using the reentrantlock and the condition 
+over traditional synchronization methods like synchronized blocks and methods
+
+It provides fine grained control with reentrantlock you have a more fine 
+grained control over the locking and unlocking processes. 
+
+
