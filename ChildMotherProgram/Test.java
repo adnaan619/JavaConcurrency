@@ -1,16 +1,17 @@
 package ChildMotherProgram;
 
-public class Test {
+public class Test{
     public static void main(String[] args) {
-        Plate plate = new Plate();
+        Plate plate = new Plate(null, false);
 
         Mother mother = new Mother(plate);
         Child child = new Child(plate);
 
-        Thread motherThread = new Thread(mother, "Mother");
-        Thread childThread = new Thread(child, "Child");
+        Thread t1 = new Thread(mother, "Mother");
+        Thread t2 = new Thread(child, "Child");
 
-        motherThread.start();
-        childThread.start();
+        t1.start();
+        t2.start();
     }
 }
+

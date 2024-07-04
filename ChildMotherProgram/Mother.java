@@ -1,6 +1,6 @@
 package ChildMotherProgram;
 
-public class Mother implements Runnable {
+public class Mother implements Runnable{
     private Plate plate;
 
     public Mother(Plate plate){
@@ -10,7 +10,7 @@ public class Mother implements Runnable {
     @Override
     public void run(){
         for (int i=0; i<10; i++){
-            String food = "Food at " +i+ "th serve";
+            String food = "Food served "+i+"th serve";
             plate.produce(food);
         }
     }

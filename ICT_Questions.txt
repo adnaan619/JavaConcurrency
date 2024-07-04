@@ -1,19 +1,31 @@
 What is a race condition ?
 
-A race condition is a condition when threads that access a shared resource like variables, files,
-or databases simulataneously at the same time you have a race condition.
+A type of error that occurs when 2 or more threads are unable to access and modify a shared resource.
 
 What is a process and a thread in brief ?
 
-A process is an independent program running representing a single instance of a program in
-execution. They are heavyweight.
+Processes are independent programs that are heavyweight and have their own memory space and do not share
+memory spaces with other threads, allocated by the OS. When a web browser and another application are
+opened at the same time they are 2 different processes and ones activity wont affect the other.
 
-Examples of processes would be a tab with a web browser opened and another with ms word opened.
-They dont share the same memory space and  if one crashes another isn't affected.
+A thread is a smaller more lightweight unit of execution within a process. Threads run concurrently by
+the means of multithreading. They are able to access a single shared resource concurrently. An example 
+could be in a text editor one thread controls the task of handling the typing and another handling the 
+displaying on the screen. 
 
-A thread is the smallest unit of execution within a process and share the same memory space and resources of their parent process
-but execute independently
+Why are threads considered lightweight? 
 
+Threads within the same process shared the same memory space and resources.
+Threads can be created and terminated with ease since they are lightweight compared to processes
+Lightweight as they can access shared resources concurrently with minimal resource usage.
+JVm provides built in mechanisms and optimizations for thread management.
+
+What is a synchronous action?
+
+Tasks or operations that occur sequentially where one task must finish before the other starts, while
+asynchronous tasks can occur concurrently.
+
+The use of the join() function is an example demonstrating synchronous actions between Threads.
 
 What is synchronization ?
 
@@ -41,29 +53,29 @@ each other without making any progress, similar to a deadlock but with active th
 
 What is a Deadlock ?
 
-A condition where 2 or more threads are blocked forever,each waiting for the other to 
-release a resource, resulting in a standstill.
+A deadlock is a situation where 2 threads are blocked forever where they are waiting for one another
+to release a resource.
 
 What are the main features of a Semaphore ? What are it's advantages and disadvantages ? Difference between the Mutex, binary and general semaphore ?
 
-A semaphore is a synchronization mechanism that is used to control access to common resources
-in a concurrent system.
+A mutex ensures that only one thread or process can access a resource at a time, essentially a 
+lock that provides exclusive access. 
 
-Semaphores use a counter to keep track of the number of resources available or the number
-of permits issued.
-General semaphores can have a counter greater than one, allowing a specific number of threads
-to access the resource concurrently.
-Binary semaphores can only be 0 or 1, similar to a mutex but with differences in usage and
-flexibility.
+In a situation where multiple threads need to access a shared resource, like that of a bank account,
+the deposit and withdraw methods, the critical sections can only be accessed by one thread at a time.
 
-Advantage - resource management and deadlock prevention
+A Binary semaphore is a semaphore with a value that could only be either 0 or 1, similar to a
+mutex but lacks the ownership concept.
 
-Disadvantage - Complexity / potential for misuse
+The producer consumer problem is a good example of the binary semaphore where the producer Thread
+produces data and the consumer thread consumes the data, The producer must signal the consumer that
+new data is available.
 
+A General semaphore manages a set number of resoures that can only be accessed by multiple threads
+simulataneously, allowing up to a defined limit.
 
-
-
-
+Managing a limited number of database connections for multiple threads, only the database connection 
+with the equal count will execute while the others remain.
 
 What are the main features of the monitor ? What is the purpose of the while loop in the monitor ?
 
@@ -80,13 +92,49 @@ Purpose of the while loop in monitors - It rechecks the condition ensuring that 
 proceeds when the condition is genuinely satisfied.
 
 
+(a) After a thread has been created using new, it is in the NEW Thread state & it is an empty 
+Thread object. No system resources have been allocated to it yet. When a thread is in this state,
+you can only start the thread by calling the start() method. Calling any other method besides 
+start() raises an IllegalThreadStateException.
+
+A new thread is created the moment a thread is extended or when a runnable is implemented by a class
+This thread is in the new state. In this state the thread is an empty object in the memory. To transition
+to the runnable state the start() method is called, the run() of the body of the thread is then executed.
+Other methods such as run(), sleep(), notify() or yield() will cause the thread to run into an
+IllegalThreadStateException.
+
+The thread states are the New state which cannot, runnable is the only state where execution can occur, 
+waiting, timed-waiting, blocked, terminated states the thread is either idle or cannot be executed. 
+
+When a thread is blocked from accessing the lock of a critical section it means that the thread
+has been executing code and as it moves to a non-runnable state, it is not available to be scheduled
+until the lock is released.
+
+If there are several threads waiting to be executed the JVM decides on the execution based on the
+priority of the thread where they could vary between 0 belong lowest priority and 5 being the mid
+priority and 10 being the max priority. If the JVM comes across threads with the same priority it uses
+a round robin fashion of execution.
+
+If a thread is in the TIMED_WAITING state what can happen to it?
+If the specified time elapses the thread will automatically move to the runnable state
+If another thread calls thread.interrupt() on the thread to interrupt it from sleep.
 
 
 What is the dining philosopher problem and how is it solved ?
 
-What is the producer problem and how is it solved in brief ?
+What is the producer consumer problem and how is it solved in brief ?
 
 What is the reader and writer problem and how is it solved ?
+
+The reader writer problem is a generalization of the mutual exclusion problem. 
+The writers write to the shared resource, modifying it, while the readers read from it. Only writer 
+can access the shared resource and write at a time while several readers can acces the 
+shared resource at the same time.
+
+Writers have exclusive access to the resource while writing(no other reader or writer must access)
+Multiple readers can access the shared resource concurrently.
+
+
 
 Describe the FSP abstract model of a process.
 
@@ -289,3 +337,275 @@ The methods to remember in this program are the activeCount() and the interrupt(
 After creating the ThreadGroup, create the Thread with calling the object from
 the ThreadGroup with the MyRunnable() and then make sure to start the thread
 Use the getName() function when you need to get the name of the thread
+
+
+Banking App to understand the synchronized method
+
+Has 4 classes - Account/ App/ Husband/ Wife
+
+public class Account{
+    private double balance;
+    private String accNo;
+
+    public Account(String accNo, double balance){
+        this.balance = balance;
+        this.accNo = accNo;
+    }
+
+    public synchronized balance deposit(double amount){
+        balance = balance + amount;
+        System.out.println(Thread.currentThread().getName() + " is the amount deposited: " + amount + " and the balance is: " + balance);
+        return balance;
+    }
+
+    public synchronized balance withdraw(double amount){
+        if ( balance >= amount){
+            balance = balance - amount;
+            System.out.println(Thread.currentThread().getName()+ " the withdrawn amount is: " + amount + " and the current balance is : " + balance);
+            return balance;
+        } else {
+            System.out.println(Thread.currentThread().getName()+ " insufficient funds.");
+        }
+    }
+
+    public synchronized double getBalance(){
+        return balance;
+    }
+
+    public string getAccNo(){
+        return accNo;
+    }
+}
+
+public class Husband implements Runnable{
+    private String name;
+    private Account account;
+
+    public Husband(Account account, String name){
+        this.account = account;
+        this.name = name;
+    }
+
+    public String getName(){
+        return name;
+    }
+
+    @Override 
+    public void run(){
+        for (int i=0; i<5; i++){
+            try{
+                account.withdraw(50.00);
+            } catch (IllegalArgumentException e){
+                System.out.println(Thread.currentThread().getName()+ " Insufficient Funds");
+            }
+        }
+    }
+}
+
+public class Wife implements Runnable{
+    private account Account;
+    private String name;
+
+    public Wife(String name, Account account){
+        this.name = name;
+        this.account = account;
+    }
+
+    public String getName(){
+        return name;
+    }
+
+    @Override
+    public void run(){
+        for (int i=0; i<10; i++){
+            account.deposit(200.00);
+        }
+    }
+}
+
+public class App{
+    public static void main(String[] args){
+        Account account = new Account("1233", 100.00);
+        Wife wife = new Wife("Jack", account);
+        Husband husband = new Husband("Juliet", account);
+
+        Thread wifeThread = new Thread(wife, wife.getName());
+        Thread husbandThread = new Thread(husband, husband.getName());
+
+        husbandThread.start();
+        wifeThread.start();
+
+    }
+}
+
+Mother-Child Plate Program - Monitors in Java
+
+public class Plate{
+    private boolean available;
+    public String food;
+
+    public Plate(boolean available, String food){
+        this.food = food;
+        this.available = available;
+    }
+
+    public synchronized void produce(String food){
+        while(available){
+            try{
+                wait();
+            } catch (InterruptedException e){
+                e.printStackTrace();
+            }
+        }
+        this.food = food;
+        System.out.println(Thread.currentThread().getName()+ " produced: "+ food);
+        available = true;
+        notifyAll();
+    }
+
+    public synchronized String consume(){
+        while(!available){
+            try{
+                wait();
+            } catch (InterruptedException e){
+                e.printStackTrace();
+            }
+        }
+        System.out.println(Thread.currentThread().getName() + " consumed: " + food);
+        available = false;
+        notifyAll();
+        return food;
+    }
+}
+
+public Mother implements Runnable{
+    private Plate plate;
+
+    public Plate(Plate plate){
+        this.plate = plate;
+    }
+
+    @Override
+    public void run(){
+        for (int i=0; i<5; i++){
+            String food = "Food at " +i+ "th serve";
+            plate.produce(food);
+        }
+    }
+}
+
+public Child implements Runnable{
+    private Plate plate;
+
+    public Child(Plate plate){
+        this.plate = plate;
+    }
+
+    @Override
+    public void run(){
+        for(int i=0; i<5; i++){
+            String food = plate.consume();
+        }
+    }
+}
+
+public class Test{
+    public static void main(String[] args){
+        Plate plate = new Plate();
+
+        Mother mother = new Mother(plate);
+        Child child = new Child(plate);
+
+        Thread t1 = new Thread(mother, "Mother");
+        Thread t2 = new Thread(child, "Child");
+
+        t1.start();
+        t2.start();
+    }
+}
+
+the methods from the monitors are the notify(), notifyAll(), and the wait();
+
+
+
+
+
+
+
+
+
+Reentrant Locks
+
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
+public class Counter{
+    private int count = 0;
+    private Lock lock = new ReentrantLock();
+
+    //Increment the counter 
+    public void increment(){
+        lock.lock();
+        try{
+            count++;
+            System.out.println(Thread.currentThread().getName()+ " counter incremented to " + count);
+        } finally{
+            lock.unlock();
+        }
+    }
+
+    public int getCount(){
+        return count;
+    }
+}
+
+import java.util.concurrent.locks.ReentrantLock;
+
+public class CounterWithReentrantLock{
+    private int count = 0;
+    private final ReentrantLock = new ReentrantLock();
+
+    public void increment(){
+        lock.lock();
+        try{
+            count++;
+            System.out.println(Thread.currentThread().getName() + " counter incremented to: " + count);
+        } finally{
+            lock.unlock();
+        }
+    }
+
+    public int getCount(){
+        return count;
+    }
+}
+
+class ReentrantLockExample{
+    public static void main(String[] args){
+        Counter counter = new Counter();
+        CounterWithReentrantLock reentrantCounter = new CounterWithReentrantLock();
+
+        Runnable task1 = () -> {
+            for (int i=0; i<10; i++){
+                counter.increment();
+                reentrantCounter.increment();
+            }
+        };
+
+        Thread thread1 = new Thread(task1, "Thread-1");
+        Thread thread2 = new Thread(task1, "Thread-2");
+
+        thread1.start();
+        thread2.start();
+
+        try{
+            thread1.join();
+            thread2.join();
+        } catch (InterruptedException e){
+            e.printStackTrace();
+        }
+
+        System.out.println("Final count for counter: " + counter.getCount());
+        System.out.println("Final count for counter: " + reentrantCounter.getCounter());
+    }
+}
